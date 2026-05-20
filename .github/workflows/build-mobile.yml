@@ -2,7 +2,7 @@ name: Build Mobile APK / AAB
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, master, develop]
     tags: ['v*']
   workflow_dispatch:
     inputs:
