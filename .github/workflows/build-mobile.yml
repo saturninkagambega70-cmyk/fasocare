@@ -64,13 +64,25 @@ jobs:
             echo "platform=android" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and download APK
+      - name: Build APK (wait for completion)
         run: |
           eas build \
             -p ${{ steps.profile.outputs.platform }} \
             --profile ${{ steps.profile.outputs.profile }} \
             --non-interactive \
-            --wait \
+            --wait
+
+      - name: Download APK
+        run: |
+          BUILD_ID=$(eas build:list \
+            -p ${{ steps.profile.outputs.platform }} \
+            --limit 1 \
+            --non-interactive \
+            --json | jq -r '.[0].id')
+          echo "Latest build: $BUILD_ID"
+          eas build:download \
+            -p ${{ steps.profile.outputs.platform }} \
+            --id "$BUILD_ID" \
             --output fasocare.apk
           ls -lh fasocare.apk
 
