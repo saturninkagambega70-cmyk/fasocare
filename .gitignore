@@ -29,3 +29,10 @@ ngrok_api.log
 
 # Generated scripts (duplicate of scripts/start-mobile.sh)
 /start-mobile.sh
+
+# Backend build artifacts
+backend/dist/
+backend/coverage/
+backend/database.sqlite
+backend/scripts/*.js
+backend/scripts/*.js.map
