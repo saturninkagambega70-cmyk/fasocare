@@ -1,0 +1,36 @@
+import { ConfigService } from "@nestjs/config";
+export declare class AppConfigService {
+    private configService;
+    constructor(configService: ConfigService);
+    get nodeEnv(): string;
+    get isProduction(): boolean;
+    get isDevelopment(): boolean;
+    get port(): number;
+    get host(): string;
+    get dbType(): "postgres" | "sqlite";
+    get dbHost(): string;
+    get dbPort(): number;
+    get dbUsername(): string;
+    get dbPassword(): string;
+    get dbDatabase(): string;
+    get dbSsl(): boolean;
+    get jwtSecret(): string;
+    get jwtRefreshSecret(): string;
+    get jwtAccessExpiration(): number;
+    get jwtRefreshExpiration(): number;
+    get rateLimitTtl(): number;
+    get rateLimitMax(): number;
+    get atUsername(): string;
+    get atApiKey(): string;
+    get atSmsFrom(): string;
+    get corsOrigins(): string[];
+    get enableAutoVerification(): boolean;
+    get enableSmsNotifications(): boolean;
+    get enableSwagger(): boolean;
+    get redisHost(): string;
+    get redisPort(): number;
+    get encryptionKey(): string;
+    get ollamaEndpoint(): string;
+    get ollamaModel(): string;
+    get enableOfflineAI(): boolean;
+}

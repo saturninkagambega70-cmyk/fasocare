@@ -1,0 +1,117 @@
+{
+  "expo": {
+    "name": "FasoCare",
+    "slug": "fasocare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#007A33"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fasocare.app",
+      "buildNumber": "1",
+      "associatedDomains": [
+        "applinks:fasocare.sante.gov.bf"
+      ],
+      "config": {
+        "googleMapsApiKey": "VOTRE_CLE_GOOGLE_MAPS_ICI"
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "FasoCare nécessite l'accès à la caméra pour scanner les ordonnances",
+        "NSLocationWhenInUseUsageDescription": "FasoCare utilise votre localisation pour trouver les pharmacies proches",
+        "NSFaceIDUsageDescription": "FasoCare utilise Face ID pour sécuriser l'accès à votre dossier médical",
+        "NSHealthShareUsageDescription": "FasoCare peut lire vos données de santé pour enrichir votre dossier médical",
+        "NSHealthUpdateUsageDescription": "FasoCare peut enregistrer vos constantes de santé dans l'app Santé",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "fasocare"
+            ],
+            "CFBundleURLName": "com.fasocare.app"
+          }
+        ],
+        "UIBackgroundModes": [
+          "remote-notification",
+          "fetch"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#007A33"
+      },
+      "package": "com.fasocare.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": "VOTRE_CLE_GOOGLE_MAPS_ICI"
+        }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "fasocare"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FasoCare nécessite l'accès à la caméra pour scanner les ordonnances"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "FasoCare utilise votre position pour les services de santé à proximité"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#007A33"
+        }
+      ],
+      "expo-secure-store",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "713e0633-f585-4a6f-ac5b-9a735f91563c"
+      }
+    },
+    "owner": "saturninkagambega"
+  }
+}

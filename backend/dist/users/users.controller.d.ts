@@ -1,0 +1,115 @@
+import { UsersService } from "./users.service";
+import { UserRole } from "./entities/user.entity";
+import { QrService } from "../medical/qr.service";
+export declare class UsersController {
+    private readonly usersService;
+    private readonly qrService;
+    constructor(usersService: UsersService, qrService: QrService);
+    findAll(): Promise<{
+        users: import("./entities/user.entity").User[];
+        total: number;
+    }>;
+    findByPhone(phone: string): Promise<{
+        id: string;
+        parent: import("./entities/user.entity").User;
+        children: import("./entities/user.entity").User[];
+        phone: string;
+        phoneHash: string;
+        name: string;
+        gender: string;
+        bloodGroup: string;
+        roles: UserRole[];
+        activeRole: UserRole;
+        licenseNumber: string;
+        publicKey: string;
+        isVerified: boolean;
+        createdAt: Date;
+        resetPasswordOTP: string;
+        resetPasswordOTPExpiry: Date;
+        is2FAEnabled: boolean;
+        twoFAOTP: string;
+        twoFAOTPExpiry: Date;
+        totpSecret: string;
+        backupCodes: string[];
+    }>;
+    findById(id: string, req: any): Promise<{
+        id: string;
+        parent: import("./entities/user.entity").User;
+        children: import("./entities/user.entity").User[];
+        phone: string;
+        phoneHash: string;
+        name: string;
+        gender: string;
+        bloodGroup: string;
+        roles: UserRole[];
+        activeRole: UserRole;
+        licenseNumber: string;
+        publicKey: string;
+        isVerified: boolean;
+        createdAt: Date;
+        resetPasswordOTP: string;
+        resetPasswordOTPExpiry: Date;
+        is2FAEnabled: boolean;
+        twoFAOTP: string;
+        twoFAOTPExpiry: Date;
+        totpSecret: string;
+        backupCodes: string[];
+    }>;
+    selfVerify(req: any): Promise<void>;
+    validateUser(id: string): Promise<{
+        message: string;
+    }>;
+    suspendUser(id: string): Promise<{
+        message: string;
+    }>;
+    getProfile(req: any): Promise<{
+        id: string;
+        parent: import("./entities/user.entity").User;
+        children: import("./entities/user.entity").User[];
+        phone: string;
+        phoneHash: string;
+        name: string;
+        gender: string;
+        bloodGroup: string;
+        roles: UserRole[];
+        activeRole: UserRole;
+        licenseNumber: string;
+        publicKey: string;
+        isVerified: boolean;
+        createdAt: Date;
+        resetPasswordOTP: string;
+        resetPasswordOTPExpiry: Date;
+        is2FAEnabled: boolean;
+        twoFAOTP: string;
+        twoFAOTPExpiry: Date;
+        totpSecret: string;
+        backupCodes: string[];
+    }>;
+    updateProfile(req: any, data: any): Promise<{
+        id: string;
+        parent: import("./entities/user.entity").User;
+        children: import("./entities/user.entity").User[];
+        phone: string;
+        phoneHash: string;
+        name: string;
+        gender: string;
+        bloodGroup: string;
+        roles: UserRole[];
+        activeRole: UserRole;
+        licenseNumber: string;
+        publicKey: string;
+        isVerified: boolean;
+        createdAt: Date;
+        resetPasswordOTP: string;
+        resetPasswordOTPExpiry: Date;
+        is2FAEnabled: boolean;
+        twoFAOTP: string;
+        twoFAOTPExpiry: Date;
+        totpSecret: string;
+        backupCodes: string[];
+    }>;
+    getChildren(req: any): Promise<import("./entities/user.entity").User[]>;
+    addChild(req: any, childPhone: string): Promise<{
+        message: string;
+    }>;
+}

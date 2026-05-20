@@ -1,0 +1,135 @@
+name: Build Mobile APK / AAB
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'EAS Build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - android
+          - ios
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Determine build profile
+        id: profile
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "profile=production" >> $GITHUB_OUTPUT
+            echo "platform=android" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == workflow_dispatch ]]; then
+            echo "profile=${{ inputs.profile }}" >> $GITHUB_OUTPUT
+            echo "platform=${{ inputs.platform }}" >> $GITHUB_OUTPUT
+          else
+            echo "profile=preview" >> $GITHUB_OUTPUT
+            echo "platform=android" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build with EAS
+        run: |
+          eas build \
+            -p ${{ steps.profile.outputs.platform }} \
+            --profile ${{ steps.profile.outputs.profile }} \
+            --non-interactive \
+            --no-wait
+
+      - name: Wait for build and download
+        run: |
+          BUILD_ID=$(eas build:list \
+            -p ${{ steps.profile.outputs.platform }} \
+            --status finished \
+            --limit 1 \
+            --non-interactive \
+            --json | jq -r '.[0].id')
+          echo "Build ID: $BUILD_ID"
+          eas build:download \
+            -p ${{ steps.profile.outputs.platform }} \
+            --id "$BUILD_ID" \
+            --output fasocare.${{ steps.profile.outputs.platform == 'ios' && 'ipa' || 'apk' }}
+          ls -lh fasocare.*
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fasocare-${{ steps.profile.outputs.profile }}-${{ steps.profile.outputs.platform }}
+          path: mobile/fasocare.*
+          retention-days: 30
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Generate release notes
+        run: |
+          cat > /tmp/release-notes.md << 'RELEOF'
+          # FasoCare Mobile ${{ github.ref_name }}
+
+          Téléchargez le fichier APK/AAB ci-dessous pour installer l'application FasoCare.
+
+          ## Instructions d'installation
+          1. Téléchargez le fichier APK correspondant à votre appareil
+          2. Ouvrez le fichier sur votre appareil Android
+          3. Autorisez l'installation depuis des sources inconnues si nécessaire
+          4. Lancez l'application et connectez-vous
+
+          > **Note:** Cette version est destinée au déploiement de production.
+          RELEOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: FasoCare ${{ github.ref_name }}
+          body_path: /tmp/release-notes.md
+          files: |
+            fasocare-*/fasocare.*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
