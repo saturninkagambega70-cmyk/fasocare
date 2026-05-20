@@ -26,8 +26,7 @@
       },
       "env": {
         "NODE_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "https://api.fasocare.gov.bf",
-        "EXPO_PUBLIC_TUNNEL_URL": ""
+        "EXPO_PUBLIC_API_URL": "https://api.fasocare.gov.bf"
       }
     }
   },
