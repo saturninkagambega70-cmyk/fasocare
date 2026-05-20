@@ -64,28 +64,15 @@ jobs:
             echo "platform=android" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build with EAS
+      - name: Build and download APK
         run: |
           eas build \
             -p ${{ steps.profile.outputs.platform }} \
             --profile ${{ steps.profile.outputs.profile }} \
             --non-interactive \
-            --no-wait
-
-      - name: Wait for build and download
-        run: |
-          BUILD_ID=$(eas build:list \
-            -p ${{ steps.profile.outputs.platform }} \
-            --status finished \
-            --limit 1 \
-            --non-interactive \
-            --json | jq -r '.[0].id')
-          echo "Build ID: $BUILD_ID"
-          eas build:download \
-            -p ${{ steps.profile.outputs.platform }} \
-            --id "$BUILD_ID" \
-            --output fasocare.${{ steps.profile.outputs.platform == 'ios' && 'ipa' || 'apk' }}
-          ls -lh fasocare.*
+            --wait \
+            --output fasocare.apk
+          ls -lh fasocare.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
