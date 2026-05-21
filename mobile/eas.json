@@ -13,7 +13,8 @@
     "preview": {
       "android": {
         "buildType": "apk",
-        "image": "latest"
+        "image": "latest",
+        "resourceClass": "large"
       },
       "env": {
         "NODE_ENV": "development",
