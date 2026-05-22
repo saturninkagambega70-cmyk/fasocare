@@ -16,7 +16,7 @@ import {
 } from "./entities/prescription-item.entity";
 import { EpidemicReport } from "./entities/epidemic-report.entity";
 import { Message } from "./entities/message.entity";
-import { Notification } from "./entities/notification.entity";
+import { Notification, NotificationType } from "./entities/notification.entity";
 import { Emergency } from "./entities/emergency.entity";
 import { TreatmentLog, TreatmentLogStatus } from "./entities/treatment-log.entity";
 import { QrService } from "./qr.service";
@@ -108,7 +108,20 @@ export class MedicalService {
       );
       // Persist expiry (24h)
       savedConsultation.qr_expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-      return this.consultationRepository.save(savedConsultation);
+      const result = await this.consultationRepository.save(savedConsultation);
+
+      const patientId = consultationData.patient?.id || savedConsultation.patient?.id;
+      if (patientId) {
+        await this.createNotification(
+          patientId,
+          "Nouvelle ordonnance",
+          "Vous avez reçu une nouvelle ordonnance. Présentez votre code QR à la pharmacie.",
+          NotificationType.PRESCRIPTION,
+          { consultationId: result.id, qrToken: result.qr_token },
+        ).catch(() => {});
+      }
+
+      return result;
     }
 
     return savedConsultation;

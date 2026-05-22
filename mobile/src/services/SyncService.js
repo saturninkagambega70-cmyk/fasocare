@@ -20,12 +20,23 @@ export const syncOfflineData = async () => {
       
       switch (action.action_type) {
         case 'CREATE_CONSULTATION':
-          await medicalService.createConsultation(
+          const consultation = await medicalService.createConsultation(
             payload.patientId, 
             payload.diagnosis, 
             payload.treatmentPlan, 
             payload.vitals
           );
+          if (consultation?.id && payload.medicines?.length) {
+            await medicalService.addPrescriptionItems(
+              consultation.id,
+              payload.medicines.map(m => ({
+                medicineName: m.medicineName,
+                dosage: m.dosage,
+                quantity: m.quantity,
+                timeOfDay: m.timeOfDay || 'Matin',
+              }))
+            );
+          }
           break;
         case 'REPORT_EPIDEMIC':
           await medicalService.reportEpidemic(payload);

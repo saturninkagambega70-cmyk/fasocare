@@ -62,9 +62,7 @@ import { validate } from "./config/env.validation";
               ? { rejectUnauthorized: false }
               : false,
           autoLoadEntities: true,
-          // ⚠️ CRITICAL: synchronize must be false in production - use migrations instead
-          // Only enabled in development with explicit USE_SYNC=true
-          synchronize: config.isDevelopment && process.env.USE_SYNC === "true",
+          synchronize: process.env.USE_SYNC === "true",
           logging: config.isDevelopment,
           extra:
             config.dbType === "sqlite"
