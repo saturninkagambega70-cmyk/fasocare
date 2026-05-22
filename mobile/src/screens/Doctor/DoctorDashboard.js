@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, ScrollView } from 'react-native';
 import { Search, User, Plus, Video as VideoIcon, LogOut, Bell, AlertCircle, FileText } from 'lucide-react-native';
 
@@ -85,10 +86,10 @@ export default function DoctorDashboard() {
     loadDashboardData();
   }, [loadDashboardData]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     setLoading(true);
     loadDashboardData();
-  }, [loadDashboardData]);
+  }, [loadDashboardData]));
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
