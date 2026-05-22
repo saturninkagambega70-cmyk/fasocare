@@ -6,17 +6,35 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Appointment, AppointmentStatus } from "./entities/appointment.entity";
+import { Notification, NotificationType } from "../medical/entities/notification.entity";
 
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
   ) {}
 
   async create(data: Partial<Appointment>): Promise<Appointment> {
     const appointment = this.appointmentRepository.create(data);
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    const doctorId = data.doctor?.id || saved.doctor?.id;
+    if (doctorId) {
+      await this.notificationRepository.save(
+        this.notificationRepository.create({
+          user: { id: doctorId as any },
+          title: "Nouveau rendez-vous",
+          content: "Un patient a pris rendez-vous avec vous.",
+          type: NotificationType.SYSTEM,
+          metadata: { appointmentId: saved.id },
+        }),
+      ).catch(() => {});
+    }
+
+    return saved;
   }
 
   async findByPatient(patientId: string): Promise<Appointment[]> {
@@ -52,7 +70,22 @@ export class AppointmentService {
       );
     }
     appointment.status = AppointmentStatus.CONFIRMED;
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    const patientId = appointment.patient?.id;
+    if (patientId) {
+      await this.notificationRepository.save(
+        this.notificationRepository.create({
+          user: { id: patientId },
+          title: "Rendez-vous confirmé",
+          content: "Votre rendez-vous a été confirmé par le médecin.",
+          type: NotificationType.SYSTEM,
+          metadata: { appointmentId: saved.id },
+        }),
+      ).catch(() => {});
+    }
+
+    return saved;
   }
 
   async complete(id: string, doctorId: string): Promise<Appointment> {
@@ -77,6 +110,23 @@ export class AppointmentService {
     }
     appointment.status = AppointmentStatus.CANCELLED;
     appointment.cancelledAt = new Date();
-    return this.appointmentRepository.save(appointment);
+    const saved = await this.appointmentRepository.save(appointment);
+
+    const otherUserId = appointment.doctor?.id === userId
+      ? appointment.patient?.id
+      : appointment.doctor?.id;
+    if (otherUserId) {
+      await this.notificationRepository.save(
+        this.notificationRepository.create({
+          user: { id: otherUserId },
+          title: "Rendez-vous annulé",
+          content: "Le rendez-vous a été annulé.",
+          type: NotificationType.SYSTEM,
+          metadata: { appointmentId: saved.id },
+        }),
+      ).catch(() => {});
+    }
+
+    return saved;
   }
 }
