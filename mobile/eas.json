@@ -22,8 +22,8 @@
       },
       "env": {
         "NODE_ENV": "development",
-        "EXPO_PUBLIC_API_URL": "https://telepathic-unlistening-berry.ngrok-free.dev",
-        "EXPO_PUBLIC_TUNNEL_URL": "https://telepathic-unlistening-berry.ngrok-free.dev"
+"EXPO_PUBLIC_API_URL": "https://fasocare-api.onrender.com",
+"EXPO_PUBLIC_TUNNEL_URL": "https://fasocare-api.onrender.com"
       }
     },
     "production": {

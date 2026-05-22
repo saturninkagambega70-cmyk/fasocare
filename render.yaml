@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: fasocare-api
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && node dist/main
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: HOST
+        value: 0.0.0.0
+      - key: DB_TYPE
+        value: sqlite
+      - key: DB_DATABASE
+        value: database.sqlite
+      - key: DB_HOST
+        value: localhost
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_USERNAME
+        value: fasocare
+      - key: DB_PASSWORD
+        value: fasocare_password
+      - key: DB_SSL
+        value: "false"
+      - key: USE_SYNC
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: JWT_ACCESS_EXPIRATION
+        value: "86400"
+      - key: JWT_REFRESH_EXPIRATION
+        value: "604800"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: ENABLE_SWAGGER
+        value: "true"
+      - key: RATE_LIMIT_TTL
+        value: "60000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
+      - key: ENABLE_SMS_NOTIFICATIONS
+        value: "false"
+      - key: ENABLE_AUTO_VERIFICATION
+        value: "true"
+      - key: REDIS_HOST
+        value: localhost
+      - key: REDIS_PORT
+        value: "6379"
