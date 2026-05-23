@@ -4,7 +4,7 @@ import { Send, ArrowLeft, User } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { medicalService } from '../../services/api';
 import { useAuthStore } from '../../store/useAuthStore';
-import { connectSocket, joinChat, onNewMessage, disconnectSocket, sendMessageViaSocket } from '../../services/socket';
+import { useSocket } from '../../context/SocketContext';
 import { useTranslation } from 'react-i18next';
 
 export default function ChatScreen({ route, navigation }) {
@@ -12,6 +12,7 @@ export default function ChatScreen({ route, navigation }) {
   const { colors } = useTheme();
   const { user } = useAuthStore();
   const { t } = useTranslation();
+  const socket = useSocket();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -37,13 +38,12 @@ export default function ChatScreen({ route, navigation }) {
   useEffect(() => {
     if (!user?.id || !contactId) return;
     loadMessages();
-    connectSocket(user.id);
-    const unsub = onNewMessage((msg) => {
+    const unsub = socket.onNewMessage((msg) => {
       if (msg.sender?.id === contactId || msg.receiver?.id === contactId) {
         setMessages(prev => [...prev, msg].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
       }
     });
-    return () => { unsub(); disconnectSocket(); };
+    return () => { unsub(); };
   }, [contactId, user?.id]);
 
   const sendMessage = async () => {
@@ -53,7 +53,7 @@ export default function ChatScreen({ route, navigation }) {
     setInput('');
     try {
       await medicalService.sendMessage(contactId, text);
-      sendMessageViaSocket(contactId, text);
+      socket.sendMessage(contactId, text);
       await loadMessages();
     } catch (err) {
       Alert.alert(t('erreur'), t('impossible_envoyer_message'));

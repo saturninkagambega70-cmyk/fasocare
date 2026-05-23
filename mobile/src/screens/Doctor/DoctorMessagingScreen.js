@@ -5,7 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { medicalService, userService } from '../../services/api';
 import { useAuthStore } from '../../store/useAuthStore';
-import { connectSocket, joinChat, onNewMessage, disconnectSocket } from '../../services/socket';
+import { useSocket } from '../../context/SocketContext';
 import { useTranslation } from 'react-i18next';
 
 const ChatItem = ({ item, onPress }) => {
@@ -32,6 +32,7 @@ export default function DoctorMessagingScreen() {
   const navigation = useNavigation();
   const { user } = useAuthStore();
   const { t } = useTranslation();
+  const socket = useSocket();
   const [search, setSearch] = useState('');
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,9 +74,8 @@ export default function DoctorMessagingScreen() {
   useEffect(() => {
     if (!user?.id) return;
     loadChats();
-    connectSocket(user.id);
-    const unsub = onNewMessage(() => { loadChats(); });
-    return () => { unsub(); disconnectSocket(); };
+    const unsub = socket.onNewMessage(() => { loadChats(); });
+    return () => { unsub(); };
   }, [user?.id]);
 
   const handleNewChat = async () => {

@@ -22,6 +22,7 @@ const Stack = createStackNavigator();
 
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { ThemeProvider } from './src/context/ThemeContext';
+import { SocketProvider } from './src/context/SocketContext';
 
 export default function App() {
   const { isAuthenticated } = useAuthStore();
@@ -46,7 +47,9 @@ export default function App() {
               <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
             </Stack.Navigator>
           ) : (
-            <AppNavigator />
+            <SocketProvider>
+              <AppNavigator />
+            </SocketProvider>
           )}
         </NavigationContainer>
       </SafeAreaProvider>
