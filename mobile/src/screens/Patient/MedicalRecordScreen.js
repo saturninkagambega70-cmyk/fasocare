@@ -173,59 +173,62 @@ export default function MedicalRecordScreen() {
                 <QRCode value={selectedRecord?.qr_token || ""} size={200} color="#0f172a" backgroundColor="#fff" />
               </View>
               <Text style={s.qrToken}>{selectedRecord?.qr_token}</Text>
-              <View style={s.consultInfo}>
-                <Text style={s.consultInfoLabel}>{t('diagnosis_label')}</Text>
-                <Text style={s.consultInfoValue}>{selectedRecord?.diagnosis || t('non_specifie')}</Text>
-                <Text style={[s.consultInfoLabel, {marginTop: 10}]}>{t('prescrit_par')}</Text>
-                <Text style={s.consultInfoValue}>Dr. {selectedRecord?.doctor?.name || t('medecin')}</Text>
-                <Text style={[s.consultInfoLabel, {marginTop: 10}]}>{t('date_label')}</Text>
-                <Text style={s.consultInfoValue}>{new Date(selectedRecord?.createdAt).toLocaleDateString('fr-FR')}</Text>
 
-                {selectedRecord?.prescription && (
-                  <View style={{marginTop: 12, borderTopWidth: 1, borderTopColor: '#f1f5f9', paddingTop: 12}}>
-                    <Text style={[s.consultInfoLabel, {marginBottom: 8}]}>{t('ordonnances')}</Text>
-                    {selectedRecord?.isDispensed && (
-                      <Text style={{fontSize: 12, fontWeight: 'bold', color: '#059669', backgroundColor: '#d1fae5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 8}}>
-                        {t('delivree_le')} {selectedRecord.dispensedAt ? new Date(selectedRecord.dispensedAt).toLocaleDateString('fr-FR') : ''}
-                      </Text>
-                    )}
+              {selectedRecord?.isDispensed && (
+                <View style={s.consultInfo}>
+                  <Text style={s.consultInfoLabel}>{t('diagnosis_label')}</Text>
+                  <Text style={s.consultInfoValue}>{selectedRecord?.diagnosis || t('non_specifie')}</Text>
+                  <Text style={[s.consultInfoLabel, {marginTop: 10}]}>{t('prescrit_par')}</Text>
+                  <Text style={s.consultInfoValue}>Dr. {selectedRecord?.doctor?.name || t('medecin')}</Text>
+                  <Text style={[s.consultInfoLabel, {marginTop: 10}]}>{t('date_label')}</Text>
+                  <Text style={s.consultInfoValue}>{new Date(selectedRecord?.createdAt).toLocaleDateString('fr-FR')}</Text>
 
-                    {selectedItems && selectedItems.length > 0 ? selectedItems.map(item => {
-                      const cachet = item.cachet;
-                      return (
-                      <View key={item.id} style={{paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#f8fafc'}}>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                          <View style={{flex: 1}}>
-                            <Text style={{fontSize: 14, fontWeight: '600', color: '#1e293b'}}>{item.medicineName}</Text>
-                            {item.dosage ? <Text style={{fontSize: 11, color: '#64748b'}}>{item.dosage}</Text> : null}
-                            <Text style={{fontSize: 11, color: '#94a3b8'}}>{t('quantite')}: {item.quantity}</Text>
-                            {item.timeOfDay ? <Text style={{fontSize: 11, color: '#d97706', fontWeight: '600'}}>🕐 {item.timeOfDay}</Text> : null}
-                            {cachet && (
-                              <View style={{marginTop: 4, backgroundColor: '#f0fdf4', padding: 6, borderRadius: 6}}>
-                                <Text style={{fontSize: 11, fontWeight: 'bold', color: '#059669'}}>🏥 {cachet.pharmacyName}</Text>
-                                <Text style={{fontSize: 10, color: '#64748b'}}>👨‍⚕️ {cachet.pharmacistName} {cachet.pharmacistLicense ? `(Lic. ${cachet.pharmacistLicense})` : ''}</Text>
-                                <Text style={{fontSize: 10, color: '#94a3b8'}}>🕐 {new Date(cachet.dispensedAt).toLocaleString('fr-FR')}</Text>
-                              </View>
-                            )}
+                  {selectedRecord?.prescription && (
+                    <View style={{marginTop: 12, borderTopWidth: 1, borderTopColor: '#f1f5f9', paddingTop: 12}}>
+                      <Text style={[s.consultInfoLabel, {marginBottom: 8}]}>{t('ordonnances')}</Text>
+                      {selectedRecord?.dispensedAt && (
+                        <Text style={{fontSize: 12, fontWeight: 'bold', color: '#059669', backgroundColor: '#d1fae5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 8}}>
+                          {t('delivree_le')} {new Date(selectedRecord.dispensedAt).toLocaleDateString('fr-FR')}
+                        </Text>
+                      )}
+
+                      {selectedItems && selectedItems.length > 0 ? selectedItems.map(item => {
+                        const cachet = item.cachet;
+                        return (
+                        <View key={item.id} style={{paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#f8fafc'}}>
+                          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                            <View style={{flex: 1}}>
+                              <Text style={{fontSize: 14, fontWeight: '600', color: '#1e293b'}}>{item.medicineName}</Text>
+                              {item.dosage ? <Text style={{fontSize: 11, color: '#64748b'}}>{item.dosage}</Text> : null}
+                              <Text style={{fontSize: 11, color: '#94a3b8'}}>{t('quantite')}: {item.quantity}</Text>
+                              {item.timeOfDay ? <Text style={{fontSize: 11, color: '#d97706', fontWeight: '600'}}>🕐 {item.timeOfDay}</Text> : null}
+                              {cachet && (
+                                <View style={{marginTop: 4, backgroundColor: '#f0fdf4', padding: 6, borderRadius: 6}}>
+                                  <Text style={{fontSize: 11, fontWeight: 'bold', color: '#059669'}}>🏥 {cachet.pharmacyName}</Text>
+                                  <Text style={{fontSize: 10, color: '#64748b'}}>👨‍⚕️ {cachet.pharmacistName} {cachet.pharmacistLicense ? `(Lic. ${cachet.pharmacistLicense})` : ''}</Text>
+                                  <Text style={{fontSize: 10, color: '#94a3b8'}}>🕐 {new Date(cachet.dispensedAt).toLocaleString('fr-FR')}</Text>
+                                </View>
+                              )}
+                            </View>
+                            <Text style={{
+                              fontSize: 11, fontWeight: 'bold',
+                              color: item.status === 'DISPENSED' ? '#059669' : item.status === 'UNAVAILABLE' ? '#dc2626' : '#d97706',
+                              backgroundColor: item.status === 'DISPENSED' ? '#d1fae5' : item.status === 'UNAVAILABLE' ? '#fee2e2' : '#fef3c7',
+                              paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
+                            }}>
+                              {item.status === 'DISPENSED' ? t('reçu') : item.status === 'UNAVAILABLE' ? t('indisponible') : t('en_attente')}
+                            </Text>
                           </View>
-                          <Text style={{
-                            fontSize: 11, fontWeight: 'bold',
-                            color: item.status === 'DISPENSED' ? '#059669' : item.status === 'UNAVAILABLE' ? '#dc2626' : '#d97706',
-                            backgroundColor: item.status === 'DISPENSED' ? '#d1fae5' : item.status === 'UNAVAILABLE' ? '#fee2e2' : '#fef3c7',
-                            paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
-                          }}>
-                            {item.status === 'DISPENSED' ? t('reçu') : item.status === 'UNAVAILABLE' ? t('indisponible') : t('en_attente')}
-                          </Text>
                         </View>
-                      </View>
-                    )}) : selectedRecord?.prescription && (
-                      <Text style={{fontSize: 13, color: '#64748b', fontStyle: 'italic'}}>
-                        {typeof selectedRecord.prescription === 'string' ? selectedRecord.prescription : JSON.stringify(selectedRecord.prescription)}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              </View>
+                      )}) : selectedRecord?.prescription && (
+                        <Text style={{fontSize: 13, color: '#64748b', fontStyle: 'italic'}}>
+                          {typeof selectedRecord.prescription === 'string' ? selectedRecord.prescription : JSON.stringify(selectedRecord.prescription)}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                </View>
+              )}
 
               {/* Suivi du Traitement — uniquement après délivrance en pharmacie */}
               {selectedRecord?.isDispensed && selectedItems && selectedItems.length > 0 && (
