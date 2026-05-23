@@ -227,8 +227,8 @@ export default function MedicalRecordScreen() {
                 )}
               </View>
 
-              {/* Suivi du Traitement */}
-              {selectedItems && selectedItems.length > 0 && (
+              {/* Suivi du Traitement — uniquement après délivrance en pharmacie */}
+              {selectedRecord?.isDispensed && selectedItems && selectedItems.length > 0 && (
                 <View style={s.treatmentSection}>
                   <Text style={s.treatmentSectionTitle}>{t('suivi_traitement')}</Text>
                   {treatmentLogs && treatmentLogs.length > 0 ? (
