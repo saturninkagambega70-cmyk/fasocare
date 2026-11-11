@@ -22,3 +22,4 @@ FasoCare est une infrastructure numérique souveraine conçue pour digitaliser l
 Cette plateforme est maintenue par l'**Agence Numérique de Santé (ANS)** du Burkina Faso.
 
 © 2026 Gouvernement du Burkina Faso. Tous droits réservés.
+le lien de l'application: https://drive.google.com/file/d/1gzL2FKatzx5beirPIKiOqQtRWKTJgYxn/view?usp=drive_link
